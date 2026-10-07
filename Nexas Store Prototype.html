@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nexas Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f4f9;--card:#fff;--ink:#12193a;--mute:#6a7190;--line:#e0e4ef;--acc:#5b3df5;--accink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1226;--card:#171c36;--ink:#eef0fa;--mute:#9aa1c4;--line:#2a3158}}
+:root[data-theme="dark"]{--bg:#0e1226;--card:#171c36;--ink:#eef0fa;--mute:#9aa1c4;--line:#2a3158}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Outfit',system-ui,sans-serif;line-height:1.45}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.promo{background:var(--acc);color:var(--accink);text-align:center;padding:7px 12px;font-size:14px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;padding:10px 16px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:26px;letter-spacing:-1px;color:var(--acc);cursor:pointer;margin-right:4px}
+.search{flex:1;min-width:150px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.btn{border:0;border-radius:10px;padding:10px 16px;background:var(--acc);color:var(--accink);font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 10px;font-size:13px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:12px 16px;max-width:1200px;margin:auto}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:6px 14px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{max-width:1200px;margin:auto;padding:0 16px 40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.p{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer}
+.pimg{height:150px;display:grid;place-items:center;font-size:64px}
+.pb{padding:10px 12px 14px}.pn{font-weight:500}.pr{font-weight:700}.old{color:var(--mute);text-decoration:line-through;font-size:13px;margin-left:6px}.off{color:#1a9b5b;font-size:13px;margin-left:6px}
+.star{font-size:12px;background:#1a9b5b;color:#fff;border-radius:6px;padding:1px 6px}
+.ov{position:fixed;inset:0;background:rgba(10,14,35,.55);z-index:20;display:none;align-items:center;justify-content:center;padding:16px}
+.ov.show{display:flex}
+.modal{background:var(--card);border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:22px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--card);z-index:21;padding:18px;overflow:auto;transform:translateX(105%);transition:transform .25s;border-left:1px solid var(--line)}
+.drawer.show{transform:none}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.qty{display:flex;align-items:center;gap:8px}.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+h2,h3{margin:0 0 8px;letter-spacing:-.3px}
+.track{display:flex;margin:14px 0 4px}
+.st{flex:1;text-align:center;font-size:11px;color:var(--mute);position:relative}
+.st i{display:block;width:16px;height:16px;border-radius:50%;background:var(--line);margin:0 auto 4px;position:relative;z-index:1}
+.st:not(:first-child)::before{content:"";position:absolute;top:7px;left:-50%;width:100%;height:3px;background:var(--line)}
+.st.done{color:var(--ink)}.st.done i,.st.done::before{background:#1a9b5b}
+.order{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.mute{color:var(--mute);font-size:14px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;z-index:30;display:none}
+.empty{text-align:center;padding:50px 10px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+</style>
+</head>
+<body>
+<div class="promo" id="promo"></div>
+<header>
+  <div class="logo" id="logo" onclick="go('home')"></div>
+  <input class="search" id="q" placeholder="Search products" oninput="renderHome()">
+  <button class="btn ghost" onclick="go('orders')">My Orders</button>
+  <button class="btn ghost" id="cust" onclick="openM('custM')">Customize</button>
+  <button class="btn ghost" id="userBtn" onclick="userClick()">Login</button>
+  <button class="btn" id="bagBtn" onclick="openBag()">Bag (0)</button>
+</header>
+<nav id="cats"></nav>
+<main id="view"></main>
+
+<div class="ov" id="prodM" onclick="if(event.target===this)closeM('prodM')"><div class="modal" id="prodBody"></div></div>
+<div class="ov" id="authM" onclick="if(event.target===this)closeM('authM')"><div class="modal">
+  <h2 id="authT">Login to Nexas</h2>
+  <div id="nameWrap" style="display:none"><label>Full name</label><input id="aName"></div>
+  <label>Email</label><input id="aMail" type="email">
+  <label>Password</label><input id="aPass" type="password">
+  <p class="mute" id="authErr" style="color:#d33"></p>
+  <button class="btn" style="width:100%" onclick="doAuth()" id="authBtn">Login</button>
+  <p class="mute" style="text-align:center"><a href="#" onclick="toggleAuth();return false" id="authSw" style="color:var(--acc)">New here? Create account</a></p>
+</div></div>
+<div class="ov" id="coM" onclick="if(event.target===this)closeM('coM')"><div class="modal" id="coBody"></div></div>
+<div class="ov" id="custM" onclick="if(event.target===this)closeM('custM')"><div class="modal">
+  <h2>Customize your store</h2>
+  <label>Store name</label><input id="cName" oninput="setCfg()">
+  <label>Announcement bar</label><input id="cPromo" oninput="setCfg()">
+  <label>Brand color</label><input id="cColor" type="color" oninput="setCfg()" style="height:44px;padding:4px">
+  <label>Theme</label><select id="cTheme" onchange="setCfg()"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select>
+  <button class="btn" style="width:100%;margin-top:16px" onclick="closeM('custM')">Done</button>
+</div></div>
+<div class="drawer" id="bag"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS=[
+{id:1,n:"Nova Wireless Earbuds",c:"Electronics",p:1999,o:3499,e:"🎧",g:["#8f7bff","#5b3df5"],r:4.4,d:"Bluetooth 5.3, 30-hour battery, touch controls."},
+{id:2,n:"Pulse Smartwatch",c:"Electronics",p:2799,o:5999,e:"⌚",g:["#3fd0c9","#1b8f9b"],r:4.2,d:"AMOLED display, heart-rate tracking, 7-day battery."},
+{id:3,n:"Aero Running Shoes",c:"Fashion",p:1499,o:2999,e:"👟",g:["#ff9d6c","#e5533d"],r:4.5,d:"Breathable mesh upper with cushioned sole."},
+{id:4,n:"Urban Denim Jacket",c:"Fashion",p:1299,o:2599,e:"🧥",g:["#6a8fd8","#3c5aa8"],r:4.1,d:"Classic fit denim jacket, all-season wear."},
+{id:5,n:"Brew Coffee Maker",c:"Home",p:2299,o:3999,e:"☕",g:["#c79a6a","#8a5a33"],r:4.3,d:"Brews 6 cups in minutes, keep-warm plate."},
+{id:6,n:"Lumen Desk Lamp",c:"Home",p:899,o:1599,e:"💡",g:["#ffd75e","#f2a900"],r:4.6,d:"3 brightness modes, USB powered, foldable."},
+{id:7,n:"Atlas Backpack 30L",c:"Fashion",p:1199,o:2199,e:"🎒",g:["#7bd88f","#2f9e59"],r:4.4,d:"Water resistant, laptop sleeve, 3 compartments."},
+{id:8,n:"Spark Gaming Mouse",c:"Electronics",p:799,o:1499,e:"🖱️",g:["#ff7aa8","#d6336c"],r:4.2,d:"6 buttons, RGB lighting, 12000 DPI sensor."},
+{id:9,n:"Zen Yoga Mat",c:"Sports",p:599,o:1199,e:"🧘",g:["#b69cff","#7a54d6"],r:4.3,d:"6mm thick non-slip mat with carry strap."},
+{id:10,n:"Titan Water Bottle",c:"Sports",p:499,o:899,e:"🥤",g:["#6ad0ff","#2a8fd6"],r:4.5,d:"Insulated steel, keeps cold 24 hours."},
+{id:11,n:"Story Notebook Set",c:"Books",p:349,o:599,e:"📓",g:["#f6b8a0","#d97e5e"],r:4.4,d:"Pack of 3 ruled notebooks, 160 pages each."},
+{id:12,n:"Echo Bluetooth Speaker",c:"Electronics",p:1599,o:2999,e:"🔊",g:["#9aa4ff","#4c59d6"],r:4.3,d:"Deep bass, 12-hour playtime, splash proof."}];
+const STAGES=["Ordered","Packed","Shipped","Out for delivery","Delivered"];
+const S={cfg:{name:"Nexas",promo:"Free delivery on orders above ₹999",color:"#5b3df5",theme:"auto"},users:[],me:null,bag:{},orders:[],cat:"All",authMode:"login"};
+function load(){try{const x=JSON.parse(localStorage.getItem("nexas")||"null");if(x)Object.assign(S,x)}catch(e){}}
+function save(){try{localStorage.setItem("nexas",JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id),inr=n=>"₹"+n.toLocaleString("en-IN");
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2200)}
+function openM(i){$(i).classList.add("show");if(i==="custM"){$("cName").value=S.cfg.name;$("cPromo").value=S.cfg.promo;$("cColor").value=S.cfg.color;$("cTheme").value=S.cfg.theme}}
+function closeM(i){$(i).classList.remove("show")}
+function applyCfg(){const c=S.cfg,r=document.documentElement;r.style.setProperty("--acc",c.color);
+ const h=c.color.slice(1),l=(parseInt(h.slice(0,2),16)*299+parseInt(h.slice(2,4),16)*587+parseInt(h.slice(4,6),16)*114)/1000;
+ r.style.setProperty("--accink",l>150?"#12193a":"#fff");
+ if(c.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",c.theme);
+ $("logo").textContent=c.name;$("promo").textContent=c.promo;$("promo").style.display=c.promo?"block":"none";document.title=c.name+" Store"}
+function setCfg(){S.cfg={name:$("cName").value||"Nexas",promo:$("cPromo").value,color:$("cColor").value,theme:$("cTheme").value};applyCfg();save()}
+function bagCount(){return Object.values(S.bag).reduce((a,b)=>a+b,0)}
+function bagTotal(){return Object.entries(S.bag).reduce((a,[id,q])=>a+PRODUCTS.find(p=>p.id==id).p*q,0)}
+function refresh(){$("bagBtn").textContent="Bag ("+bagCount()+")";$("userBtn").textContent=S.me?"Hi, "+S.me.name.split(" ")[0]+" · Logout":"Login";save()}
+function card(p){const off=Math.round((1-p.p/p.o)*100);
+ return `<div class="p" onclick="showProd(${p.id})"><div class="pimg" style="background:linear-gradient(135deg,${p.g[0]},${p.g[1]})">${p.e}</div><div class="pb"><div class="pn">${p.n}</div><span class="star">${p.r} ★</span><div><span class="pr">${inr(p.p)}</span><span class="old">${inr(p.o)}</span><span class="off">${off}% off</span></div></div></div>`}
+function renderCats(){const cs=["All",...new Set(PRODUCTS.map(p=>p.c))];$("cats").innerHTML=cs.map(c=>`<button class="chip ${c===S.cat?"on":""}" onclick="S.cat='${c}';go('home')">${c}</button>`).join("")}
+function renderHome(){const q=$("q").value.toLowerCase();
+ const list=PRODUCTS.filter(p=>(S.cat==="All"||p.c===S.cat)&&p.n.toLowerCase().includes(q));
+ $("view").innerHTML=list.length?`<div class="grid">${list.map(card).join("")}</div>`:`<div class="empty">No products match "${q}". Try another word or category.</div>`}
+function go(v){renderCats();if(v==="home")renderHome();else renderOrders();window.scrollTo(0,0)}
+function showProd(id){const p=PRODUCTS.find(x=>x.id===id);
+ $("prodBody").innerHTML=`<div class="pimg" style="background:linear-gradient(135deg,${p.g[0]},${p.g[1]});border-radius:12px;height:200px;font-size:90px">${p.e}</div><h2 style="margin-top:14px">${p.n}</h2><span class="star">${p.r} ★</span><p>${p.d}</p><div class="pr" style="font-size:22px">${inr(p.p)}<span class="old">${inr(p.o)}</span></div><div style="display:flex;gap:10px;margin-top:14px"><button class="btn" style="flex:1" onclick="addBag(${p.id});closeM('prodM')">Add to bag</button><button class="btn ghost" onclick="addBag(${p.id});closeM('prodM');checkout()">Buy now</button></div>`;openM("prodM")}
+function addBag(id){S.bag[id]=(S.bag[id]||0)+1;refresh();toast("Added to bag")}
+function chg(id,d){S.bag[id]=(S.bag[id]||0)+d;if(S.bag[id]<=0)delete S.bag[id];refresh();openBag()}
+function openBag(){const ids=Object.keys(S.bag);
+ $("bag").innerHTML=`<div style="display:flex;justify-content:space-between"><h2>Your bag</h2><button class="btn ghost sm" onclick="closeBag()">Close</button></div>`+(ids.length?ids.map(id=>{const p=PRODUCTS.find(x=>x.id==id);return `<div class="row"><div>${p.e} ${p.n}<div class="mute">${inr(p.p)}</div></div><div class="qty"><button onclick="chg(${id},-1)">−</button>${S.bag[id]}<button onclick="chg(${id},1)">+</button></div></div>`}).join("")+`<h3 style="margin-top:16px">Total: ${inr(bagTotal())}</h3><button class="btn" style="width:100%" onclick="closeBag();checkout()">Place order</button>`:`<div class="empty">Your bag is empty. Add something you like.</div>`);
+ $("bag").classList.add("show")}
+function closeBag(){$("bag").classList.remove("show")}
+function userClick(){if(S.me){S.me=null;refresh();toast("Logged out");go("home")}else openM("authM")}
+function toggleAuth(){S.authMode=S.authMode==="login"?"signup":"login";const l=S.authMode==="login";
+ $("authT").textContent=l?"Login to "+S.cfg.name:"Create your account";$("nameWrap").style.display=l?"none":"block";$("authBtn").textContent=l?"Login":"Sign up";$("authSw").textContent=l?"New here? Create account":"Have an account? Login";$("authErr").textContent=""}
+function doAuth(){const m=$("aMail").value.trim().toLowerCase(),pw=$("aPass").value,nm=$("aName").value.trim(),er=$("authErr");
+ if(!m.includes("@")||pw.length<4){er.textContent="Enter a valid email and a password of 4+ characters.";return}
+ if(S.authMode==="signup"){if(!nm){er.textContent="Enter your name.";return}if(S.users.find(u=>u.email===m)){er.textContent="This email already has an account. Login instead.";return}
+  const u={name:nm,email:m,pw};S.users.push(u);S.me=u}
+ else{const u=S.users.find(u=>u.email===m&&u.pw===pw);if(!u){er.textContent="Wrong email or password. New user? Create an account.";return}S.me=u}
+ closeM("authM");refresh();toast("Welcome, "+S.me.name.split(" ")[0]);if(S.pendingCheckout){S.pendingCheckout=false;checkout()}}
+function checkout(){if(!bagCount()){toast("Your bag is empty");return}
+ if(!S.me){S.pendingCheckout=true;S.authMode="login";toggleAuth();toggleAuth();toast("Login to place your order");openM("authM");return}
+ $("coBody").innerHTML=`<h2>Checkout</h2><p class="mute">${bagCount()} item(s) · Total ${inr(bagTotal())}</p><label>Full name</label><input id="kN" value="${S.me.name}"><label>Phone</label><input id="kP" inputmode="tel"><label>Address</label><input id="kA"><label>City / Pincode</label><input id="kC"><label>Payment</label><select id="kPay"><option>Cash on delivery</option><option>UPI (demo)</option><option>Card (demo)</option></select><p class="mute" id="kE" style="color:#d33"></p><button class="btn" style="width:100%" onclick="placeOrder()">Confirm order · ${inr(bagTotal())}</button>`;openM("coM")}
+function placeOrder(){const g=i=>$(i).value.trim();if(!g("kN")||g("kP").length<8||!g("kA")||!g("kC")){$("kE").textContent="Fill name, a valid phone, address and city.";return}
+ const items=Object.entries(S.bag).map(([id,q])=>({id:+id,q}));
+ S.orders.unshift({id:"NX"+Date.now().toString().slice(-8),email:S.me.email,items,total:bagTotal(),addr:`${g("kN")}, ${g("kA")}, ${g("kC")}`,pay:$("kPay").value,stage:0,date:new Date().toLocaleDateString("en-IN")});
+ S.bag={};refresh();closeM("coM");toast("Order placed!");go("orders")}
+function advance(id){const o=S.orders.find(x=>x.id===id);if(o.stage<4){o.stage++;save();renderOrders()}}
+function renderOrders(){if(!S.me){$("view").innerHTML=`<div class="empty">Login to see your orders and track shipments.<br><br><button class="btn" onclick="openM('authM')">Login</button></div>`;return}
+ const os=S.orders.filter(o=>o.email===S.me.email);
+ $("view").innerHTML=`<h2 style="margin-top:6px">My Orders</h2>`+(os.length?os.map(o=>`<div class="order"><div class="row" style="border:0;padding-top:0"><div><b>Order ${o.id}</b><div class="mute">${o.date} · ${o.pay} · ${inr(o.total)}</div></div><b style="color:${o.stage===4?"#1a9b5b":"var(--acc)"}">${STAGES[o.stage]}</b></div><div>${o.items.map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);return `<span class="chip" style="display:inline-block;margin:0 6px 6px 0">${p.e} ${p.n} × ${i.q}</span>`}).join("")}</div><div class="track">${STAGES.map((s,i)=>`<div class="st ${i<=o.stage?"done":""}"><i></i>${s}</div>`).join("")}</div><div class="mute">Deliver to: ${o.addr}</div>${o.stage<4?`<button class="btn ghost sm" style="margin-top:10px" onclick="advance('${o.id}')">Demo: move to next stage</button>`:""}</div>`).join(""):`<div class="empty">No orders yet. Your first order will show up here with live tracking.</div>`)}
+load();applyCfg();refresh();go("home");
+</script>
+</body>
+</html>
